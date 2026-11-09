@@ -3,6 +3,12 @@ name: Publikuj stronę GitHub Pages
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'scripts/discover-youtube.mjs'
+      - '.github/workflows/catalog.yml'
+      - 'data/youtube-discovery.json'
+      - 'docs/**'
+      - 'README.md'
   workflow_dispatch:
 
 permissions:

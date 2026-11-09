@@ -1,4 +1,5 @@
 import { writeFile } from 'node:fs/promises';
+import { releaseMetadata } from '../lib/catalog.ts';
 const key = process.env.YOUTUBE_API_KEY?.trim();
 if (!key) throw new Error('Brak YOUTUBE_API_KEY');
 async function api(resource, params) {
@@ -60,7 +61,7 @@ try {
   const videos = [], list = [...ids];
   for (let i=0;i<list.length;i+=50) {
     const data = await api('videos', {part:'snippet,contentDetails',id:list.slice(i,i+50).join(',')});
-    for (const v of data.items) videos.push({id:v.id,title:v.snippet.title,channelId:v.snippet.channelId,channelTitle:v.snippet.channelTitle,publishedAt:v.snippet.publishedAt,duration:v.contentDetails.duration,description:v.snippet.description});
+    for (const v of data.items) videos.push({id:v.id,title:v.snippet.title,channelId:v.snippet.channelId,channelTitle:v.snippet.channelTitle,publishedAt:v.snippet.publishedAt,duration:v.contentDetails.duration,...releaseMetadata(v.snippet.description||'',v.snippet.channelTitle==='sanah - Topic')});
   }
   videos.sort((a,b)=>a.id.localeCompare(b.id));
   await writeFile(new URL('../data/youtube-discovery.json',import.meta.url),JSON.stringify({channels,playlists,videos},null,2)+'\n');
