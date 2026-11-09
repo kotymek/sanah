@@ -2,6 +2,18 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { fetchVideoStatistics, validateVideoIds } from '../lib/youtube.ts';
 const first='S7sN-cFhwuk', second='hHb3owr6PQg', third='rR001X7JQy8';
+test('API error explains invalid key without leaking credentials or metadata',async()=>{
+  await assert.rejects(fetchVideoStatistics([first],'test-secret',async()=>Response.json({error:{
+    status:'INVALID_ARGUMENT',message:'API key not valid. test-secret https://example.com/?key=test-secret',
+    details:[{reason:'API_KEY_INVALID',metadata:{credential:'test-secret'}}],
+  }},{status:400})),error=>error.message.includes('API_KEY_INVALID') && error.message.includes('API key not valid') && !error.message.includes('test-secret') && !error.message.includes('example.com'));
+});
+test('surrounding whitespace in the secret is removed before sending',async()=>{
+  await fetchVideoStatistics([first],'  test-secret\n',async(url,options)=>{
+    assert.equal(options.headers['X-Goog-Api-Key'],'test-secret');
+    return Response.json({items:[]});
+  });
+});
 test('credential is header-only; response order is mapped by ID; zero is real',async()=>{
   const result=await fetchVideoStatistics([first,second,third],'test-secret',async(url,options)=>{
     assert.equal(options.headers['X-Goog-Api-Key'],'test-secret');
