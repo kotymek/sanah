@@ -7,7 +7,8 @@ async function api(resource, params) {
   });
   if (!response.ok) throw new Error(`YouTube ${resource}: HTTP ${response.status}`);
   const data = await response.json();
-  if (!Array.isArray(data.items)) throw new Error('Nieprawidłowa odpowiedź YouTube');
+  if (!data.items && data.pageInfo?.totalResults === 0) data.items=[];
+  if (!Array.isArray(data.items)) throw new Error(`Nieprawidłowa odpowiedź YouTube: ${resource}`);
   return data;
 }
 async function all(resource, params) {
@@ -25,7 +26,8 @@ async function all(resource, params) {
 try {
   const channels = [];
   for (const handle of ['sanahmusic', 'sanahVEVO']) {
-    const data = await api('channels', {part:'snippet,contentDetails', forHandle:handle});
+    let data = await api('channels', {part:'snippet,contentDetails', forHandle:handle});
+    if (!data.items.length) data = await api('channels', {part:'snippet,contentDetails', forUsername:handle});
     if (data.items.length !== 1) throw new Error(`Nie znaleziono kanału ${handle}`);
     const c = data.items[0];
     channels.push({id:c.id, title:c.snippet.title, uploads:c.contentDetails.relatedPlaylists.uploads});
