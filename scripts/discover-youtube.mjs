@@ -32,7 +32,7 @@ try {
     const c = data.items[0];
     channels.push({id:c.id, title:c.snippet.title, uploads:c.contentDetails.relatedPlaylists.uploads});
   }
-  const seed = await api('videos', {part:'snippet',id:'S7sN-cFhwuk'});
+  const seed = await api('videos', {part:'snippet',id:'S7sN-cFhwuk,ujYUUnYjuos'});
   for (const v of seed.items) {
     if (channels.some(c=>c.id===v.snippet.channelId)) continue;
     const data = await api('channels',{part:'snippet,contentDetails',id:v.snippet.channelId});
@@ -46,8 +46,11 @@ try {
   }
   for (const p of playlists) {
     const items = await all('playlistItems', {part:'contentDetails',playlistId:p.id});
+    p.videoIds = items.map(item=>item.contentDetails.videoId);
     for (const item of items) ids.add(item.contentDetails.videoId);
   }
+  // Verified collaboration published outside the artist's own channels.
+  ids.add('DnePdjIA0wk');
   const videos = [], list = [...ids];
   for (let i=0;i<list.length;i+=50) {
     const data = await api('videos', {part:'snippet,contentDetails',id:list.slice(i,i+50).join(',')});
