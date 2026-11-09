@@ -1,0 +1,31 @@
+name: Odkryj katalog YouTube
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: youtube-stats
+  cancel-in-progress: false
+jobs:
+  discover:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - run: node scripts/discover-youtube.mjs
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      - name: Zapisz katalog źródłowy
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/youtube-discovery.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'data: discover official YouTube catalog'
+          git push origin HEAD:main
