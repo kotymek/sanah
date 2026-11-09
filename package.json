@@ -14,7 +14,9 @@
     "db:generate": "drizzle-kit generate",
     "sync:youtube": "node --experimental-strip-types scripts/sync-youtube.mjs",
     "test": "node --experimental-strip-types --test tests/*.test.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:pages": "vite build --config vite.pages.config.ts",
+    "preview:pages": "vite preview --config vite.pages.config.ts --host 127.0.0.1"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

@@ -4,13 +4,26 @@ Nieoficjalny ranking 12 wybranych utworów sanah. Interaktywny interfejs React +
 
 ## Stan integracji
 
-- **YouTube:** adapter Data API v3, walidacja, daty pomiarów, historia i codzienny workflow GitHub Actions są przygotowane. Wymagają sekretu `YOUTUBE_API_KEY`. Nie wykonano jeszcze pomiaru z rzeczywistym kluczem.
+- **YouTube:** działa codzienny pomiar Data API v3. Pierwsze rzeczywiste liczniki zapisano 9 listopada 2026. Workflow korzysta z sekretu `YOUTUBE_API_KEY`.
 - **Spotify:** publiczne Web API nie zwraca całkowitej liczby odsłuchów. Rzeczywisty widok pokazuje brak danych; potrzebne odrębne źródło.
 - **Demo:** osobny zestaw wymyślonych liczb. Nigdy nie jest łączony z prawdziwymi pomiarami. Do pierwszego pomiaru strona otwiera demo z wyraźnym oznaczeniem i przełącznikiem. Po uzyskaniu danych otwiera ranking YouTube.
 
 **[Instrukcja aktywacji YouTube](docs/YOUTUBE_SETUP.md)**
 
 ## Uruchomienie
+
+Publiczna strona: **https://kotymek.github.io/sanah/**.
+
+Workflow `pages.yml` buduje i publikuje stronę po zmianach na `main`; można też uruchomić go ręcznie. W ustawieniach repozytorium Pages źródłem jest **GitHub Actions**.
+
+Wersja GitHub Pages korzysta z tego samego interfejsu co Sites, lecz pobiera publiczny plik `data/youtube.json` bezpośrednio z GitHuba. Nie potrzebuje serwera ani klucza API w przeglądarce. Zapasem jest pomiar dołączony do kompilacji. Codzienne aktualizacje liczników nie wymagają ponownej publikacji.
+
+```sh
+npm run build:pages
+npm run preview:pages
+```
+
+Wynik kompilacji znajduje się w `dist-pages/`, z bazową ścieżką `/sanah/`.
 
 Wymagany Node.js 24 LTS lub nowszy (skrypty danych korzystają z wbudowanej obsługi TypeScript).
 
