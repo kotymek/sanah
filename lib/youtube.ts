@@ -2,7 +2,10 @@ import type { VideoStat } from "./statistics.ts";
 
 async function describeApiError(response: Response, apiKey: string): Promise<string> {
   try {
-    const body = await response.json();
+    const body = await response.json() as { error?: {
+      status?: unknown; message?: unknown;
+      errors?: { reason?: unknown }[]; details?: { reason?: unknown }[];
+    } } | null;
     const error = body?.error;
     // Only selected error fields, never request metadata, headers or the raw body.
     const reasons = [error?.status,
