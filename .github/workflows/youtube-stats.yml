@@ -1,0 +1,53 @@
+name: Aktualizuj statystyki YouTube
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 6 * * *'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: youtube-stats
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Sprawdź konfigurację
+        id: config
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: |
+          if [ -z "$YOUTUBE_API_KEY" ]; then
+            echo 'Brak sekretu YOUTUBE_API_KEY. Zobacz docs/YOUTUBE_SETUP.md.' >> "$GITHUB_STEP_SUMMARY"
+            echo 'ready=false' >> "$GITHUB_OUTPUT"
+          else
+            echo 'ready=true' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Testy przetwarzania danych
+        if: steps.config.outputs.ready == 'true'
+        run: node --experimental-strip-types --test tests/*.test.mjs
+      - name: Pobierz liczniki
+        if: steps.config.outputs.ready == 'true'
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: node --experimental-strip-types scripts/sync-youtube.mjs
+      - name: Zapisz pomiar
+        if: steps.config.outputs.ready == 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/youtube.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'data: update YouTube statistics'
+          git push origin HEAD:main
