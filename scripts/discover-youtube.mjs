@@ -45,7 +45,13 @@ try {
     for (const p of found) playlists.push({id:p.id,title:p.snippet.title,channelId:channel.id});
   }
   for (const p of playlists) {
-    const items = await all('playlistItems', {part:'contentDetails',playlistId:p.id});
+    let items;
+    try { items = await all('playlistItems', {part:'contentDetails',playlistId:p.id}); }
+    catch (error) {
+      if (!error.message.includes('HTTP 404') || p.title !== 'Uploads' || !channels.find(c=>c.id===p.channelId)?.title.includes('Topic')) throw error;
+      const found = await all('search', {part:'id',channelId:p.channelId,type:'video',order:'date'});
+      items = found.map(v=>({contentDetails:{videoId:v.id.videoId}}));
+    }
     p.videoIds = items.map(item=>item.contentDetails.videoId);
     for (const item of items) ids.add(item.contentDetails.videoId);
   }
