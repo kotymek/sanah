@@ -1,6 +1,67 @@
 {
   "version": 1,
-  "fetchedAt": null,
-  "videos": [],
+  "fetchedAt": "2026-11-09T16:47:37.126Z",
+  "videos": [
+    {
+      "id": "S7sN-cFhwuk",
+      "views": 108687281,
+      "status": "ok"
+    },
+    {
+      "id": "hHb3owr6PQg",
+      "views": 119111696,
+      "status": "ok"
+    },
+    {
+      "id": "rR001X7JQy8",
+      "views": 106623514,
+      "status": "ok"
+    },
+    {
+      "id": "pxikqLzKZDY",
+      "views": 84020908,
+      "status": "ok"
+    },
+    {
+      "id": "FKee5VCDVxg",
+      "views": 35971917,
+      "status": "ok"
+    },
+    {
+      "id": "5Iwy_xeJi7c",
+      "views": 77376269,
+      "status": "ok"
+    },
+    {
+      "id": "nN2eZos7HN0",
+      "views": 47452290,
+      "status": "ok"
+    },
+    {
+      "id": "eL-Wyc08Ktc",
+      "views": 55020256,
+      "status": "ok"
+    },
+    {
+      "id": "GGiJstIgkq4",
+      "views": 35017781,
+      "status": "ok"
+    },
+    {
+      "id": "lthffObMcw0",
+      "views": 82603696,
+      "status": "ok"
+    },
+    {
+      "id": "DnePdjIA0wk",
+      "views": 149920533,
+      "status": "ok"
+    },
+    {
+      "id": "43Gs5Jvfx4w",
+      "views": 58406214,
+      "status": "ok"
+    }
+  ],
   "history": []
 }
