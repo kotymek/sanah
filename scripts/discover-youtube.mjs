@@ -25,12 +25,18 @@ async function all(resource, params) {
 }
 try {
   const channels = [];
-  for (const handle of ['sanahmusic', 'sanahVEVO']) {
+  for (const handle of ['sanahmusic']) {
     let data = await api('channels', {part:'snippet,contentDetails', forHandle:handle});
     if (!data.items.length) data = await api('channels', {part:'snippet,contentDetails', forUsername:handle});
     if (data.items.length !== 1) throw new Error(`Nie znaleziono kanału ${handle}`);
     const c = data.items[0];
     channels.push({id:c.id, title:c.snippet.title, uploads:c.contentDetails.relatedPlaylists.uploads});
+  }
+  const seed = await api('videos', {part:'snippet',id:'S7sN-cFhwuk'});
+  for (const v of seed.items) {
+    if (channels.some(c=>c.id===v.snippet.channelId)) continue;
+    const data = await api('channels',{part:'snippet,contentDetails',id:v.snippet.channelId});
+    for (const c of data.items) channels.push({id:c.id,title:c.snippet.title,uploads:c.contentDetails.relatedPlaylists.uploads});
   }
   const ids = new Set(), playlists = [];
   for (const channel of channels) {
